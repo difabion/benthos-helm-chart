@@ -1,0 +1,22 @@
+name: tagging
+
+on: 
+  pull_request:
+    types:
+      - closed
+
+jobs:
+  get-tag:
+    if: github.event.pull_request.merged == true
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out repo
+        uses: actions/checkout@v2
+
+      - name: Get chart.yaml tag
+        id: get-tag
+        run: |
+          echo "chart_tag=$(grep -P '(?<=version: )[\d\.]+' chart.yaml)" >> $GITHUB_ENV
+
+      - name: Check for tag
+        run: git tag -l {{ env.chart_tag }}
