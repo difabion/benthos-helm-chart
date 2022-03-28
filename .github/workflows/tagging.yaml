@@ -1,9 +1,12 @@
 name: tagging
 
 on: 
-  pull_request:
-    types:
-      - closed
+#   pull_request:
+#     types:
+#       - closed
+  push:
+    branches:
+      - automation
 
 jobs:
   apply-tag:
