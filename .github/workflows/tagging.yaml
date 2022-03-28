@@ -6,7 +6,7 @@ on:
       - closed
 
 jobs:
-  get-tag:
+  apply-tag:
     if: github.event.pull_request.merged == true
     runs-on: ubuntu-latest
     steps:
@@ -16,19 +16,9 @@ jobs:
       - name: Get chart.yaml tag
         run: |
           echo "chart_tag=$(grep -P '(?<=version: )[\d\.]+' chart.yaml)" >> $GITHUB_ENV
-  
-  check-tag:
-    runs-on: ubuntu-latest
-    needs: get-tag
-    steps:
       - name: Check for tag
         run: |
           echo "is_exists_chart_tag=$([[ $(git tag -l ${{ env.chart_tag }}) ]] && echo true || echo false)" >> $GITHUB_ENV
-
-  tag-release:
-    runs-on: ubuntu-latest
-    needs: check-tag
-    steps:
       - name: Conditionally tag release
         if: env.is_exists_chart_tag == true
         env:
