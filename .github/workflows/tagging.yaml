@@ -23,7 +23,7 @@ jobs:
         run: |
           echo "is_exists_chart_tag=$(if [[ $(git tag -l ${{ env.chart_tag }}) ]]; then echo true; else echo false; fi)" >> $GITHUB_ENV
       - name: Conditionally tag release
-        # if: env.is_exists_chart_tag == true
+        # if: env.is_exists_chart_tag == false
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
