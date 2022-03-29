@@ -18,7 +18,7 @@ jobs:
 
       - name: Get chart.yaml tag
         run: |
-          echo "chart_tag=$(grep -P '(?<=version: )[\d\.]+' ${GITHUB_WORKSPACE}/Chart.yaml)" >> $GITHUB_ENV
+          echo "chart_tag=$(grep '^version: ' ${GITHUB_WORKSPACE}/Chart.yaml | sed 's/version: //g')" >> $GITHUB_ENV
       - name: Check for tag
         run: |
           echo "is_exists_chart_tag=$([[ $(git tag -l ${{ env.chart_tag }}) ]] && echo true || echo false)" >> $GITHUB_ENV
