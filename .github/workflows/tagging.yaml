@@ -23,13 +23,13 @@ jobs:
           echo "chart_tag=$(grep '^version: ' ${GITHUB_WORKSPACE}/Chart.yaml | sed 's/version: //g')" >> $GITHUB_ENV
       - name: Check for tag
         run: |
-          echo "test=$(git tag -l 0.3.0)" >> $GITHUB_ENV
+          echo "repo_tag=$(git tag -l 0.3.0)" >> $GITHUB_ENV
       - name: Conditionally tag release
-        # if: env.is_exists_chart_tag == false
+        if: env.chart_tag == env.repo_tag
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          echo "${{ env.is_exists_chart_tag }}"
+          echo "true"
         # uses: actions/create-release@v1
         # with:
         #   tag_name: ${{ env.chart_tag }}
