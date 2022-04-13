@@ -21,7 +21,8 @@ jobs:
           echo "chart_tag=$(grep '^version: ' ${GITHUB_WORKSPACE}/Chart.yaml | sed 's/version: //g')" >> $GITHUB_ENV
       - name: Check for tag
         run: |
-          echo "is_exists_chart_tag=$(cd ${GITHUB_WORKSPACE}; git tag -l {{ env.chart_tag }})" >> $GITHUB_ENV
+          cd ${GITHUB_WORKSPACE} && \
+          echo "is_exists_chart_tag=$(git tag -l {{ env.chart_tag }})" >> $GITHUB_ENV
       - name: Conditionally tag release
         # if: env.is_exists_chart_tag == false
         env:
