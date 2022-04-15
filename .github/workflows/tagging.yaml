@@ -1,16 +1,16 @@
 name: tagging
 
 on: 
-#   pull_request:
-#     types:
-#       - closed
+  pull_request:
+    types:
+      - closed
   push:
     branches:
       - automation
 
 jobs:
   apply-tag:
-#     if: github.event.pull_request.merged == true
+    if: github.event.pull_request.merged == true
     runs-on: ubuntu-latest
     steps:
       - name: Check out repo
@@ -23,7 +23,7 @@ jobs:
           echo "chart_tag=$(grep '^version: ' ${GITHUB_WORKSPACE}/Chart.yaml | sed 's/version: //g')" >> $GITHUB_ENV
       - name: Check for tag
         run: |
-          echo "repo_tag=$(git tag -l 0.3.0)" >> $GITHUB_ENV
+          echo "repo_tag=$(git tag -l ${{ env.chart_tag }})" >> $GITHUB_ENV
       - name: Conditionally tag release
         if: env.chart_tag != env.repo_tag
         env:
@@ -36,4 +36,3 @@ jobs:
           body: ""
           draft: false
           prerelease: false
-
