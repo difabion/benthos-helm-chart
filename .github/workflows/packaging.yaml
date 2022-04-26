@@ -30,7 +30,7 @@ jobs:
           cd ${GITHUB_WORKSPACE}/..
           helm package benthos-helm-chart
           cd benthos-helm-chart
-          git checkout -b ${{ env.branch }}
+          git checkout ${{ env.branch }}
           mv ../README.md .
           mv ../benthos-*.tgz .
           helm repo index . --url https://benthosdev.github.io/benthos-helm-chart/
