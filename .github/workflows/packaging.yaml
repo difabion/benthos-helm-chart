@@ -33,7 +33,7 @@ jobs:
           git checkout -b ${{ env.branch }}
           mv ../README.md .
           mv ../benthos-*.tgz .
-          helm index . --url https://benthosdev.github.io/benthos-helm-chart/
+          helm repo index . --url https://benthosdev.github.io/benthos-helm-chart/
           git config user.name github-actions
           git config user.email github-actions@github.com
           git add .
