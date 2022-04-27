@@ -56,7 +56,7 @@ jobs:
 
       - name: Create package and push
         env:
-          branch: gethub-penguins
+          pages_branch: gethub-penguins
           target_branch: fake-main
         run: |
           git checkout ${{ env.target_branch }}
@@ -64,7 +64,7 @@ jobs:
           cd ${GITHUB_WORKSPACE}/..
           helm package benthos-helm-chart
           cd benthos-helm-chart
-          git checkout ${{ env.branch }}
+          git checkout ${{ env.pages_branch }}
           mv ../README.md .
           mv ../benthos-*.tgz .
           helm repo index . --url https://benthosdev.github.io/benthos-helm-chart/
