@@ -10,7 +10,7 @@ jobs:
     if: github.event.pull_request.merged == true
     runs-on: ubuntu-latest
     outputs:
-      tag_release_outcome: ${{ steps.tag_release.outcome }}
+      tag_release_outcome: ${{ steps.tag_release_output.outputs.tag_release_outcome }}
     steps:
       - name: Check out repo
         uses: actions/checkout@v2
@@ -35,6 +35,10 @@ jobs:
           body: ""
           draft: false
           prerelease: false
+      - name: Set output
+        id: tag_release_output
+        run: |
+          echo "::set-output name=tag_release_outcome::${{ steps.tag_release.outcome }}"
 
   helm_package:
     needs: publish_release
