@@ -42,7 +42,7 @@ jobs:
 
   helm_package:
     needs: publish_release
-    if: ${{ needs.publish_release.outputs.tag_release_outcome }} == "success"
+    if: needs.publish_release.outputs.tag_release_outcome == "success"
     runs-on: ubuntu-latest
     env:
       tag: ${GITHUB_REF}
