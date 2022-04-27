@@ -1,0 +1,75 @@
+name: release_flow
+
+on: 
+  pull_request:
+    types:
+      - closed
+
+jobs:
+  publish_release:
+    if: github.event.pull_request.merged == true
+    runs-on: ubuntu-latest
+    outputs:
+      tag_release_outcome: ${{ steps.tag_release.outcome }}
+    steps:
+      - name: Check out repo
+        uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
+      - name: Get chart.yaml tag
+        run: |
+          echo "chart_tag=$(grep '^version: ' ${GITHUB_WORKSPACE}/Chart.yaml | sed 's/version: //g')" >> $GITHUB_ENV
+      - name: Check for tag
+        run: |
+          echo "repo_tag=$(git tag -l ${{ env.chart_tag }})" >> $GITHUB_ENV
+      - name: Conditionally tag release
+        id: tag_release
+        if: env.chart_tag != env.repo_tag
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        uses: actions/create-release@v1
+        with:
+          tag_name: ${{ env.chart_tag }}
+          release_name: ${{ env.chart_tag }}
+          commitish: main
+          body: ""
+          draft: false
+          prerelease: false
+
+  helm_package:
+    needs: publish_release
+    if: ${{ needs.publish_release.outputs.tag_release_outcome }} == "success"
+    runs-on: ubuntu-latest
+    env:
+      tag: ${GITHUB_REF}
+
+    steps:
+      - name: Check out repo
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+
+      - name: Install Helm
+        uses: azure/setup-helm@v1
+        with:
+          version: v3.7.2
+
+      - name: Create package and push
+        env:
+          branch: gethub-penguins
+          target_branch: fake-main
+        run: |
+          git checkout ${{ env.target_branch }}
+          cp README.md ..
+          cd ${GITHUB_WORKSPACE}/..
+          helm package benthos-helm-chart
+          cd benthos-helm-chart
+          git checkout ${{ env.branch }}
+          mv ../README.md .
+          mv ../benthos-*.tgz .
+          helm repo index . --url https://benthosdev.github.io/benthos-helm-chart/
+          git config user.name github-actions
+          git config user.email github-actions@github.com
+          git add .
+          git commit -m "bump chart version to ${{ env.tag }}"
+          git push origin ${{ env.branch }}
