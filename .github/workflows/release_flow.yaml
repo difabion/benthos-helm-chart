@@ -32,7 +32,7 @@ jobs:
           tag_name: ${{ env.chart_tag }}
           release_name: ${{ env.chart_tag }}
           commitish: main
-          body: ""
+          body: "bump chart to ${{ env.chart_tag }}"
           draft: false
           prerelease: false
       - name: Set output
